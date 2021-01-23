@@ -1,0 +1,29 @@
+#w {
+    color: red;
+}
+
+#o {
+    color: green;
+}
+
+#l {
+    color: blue;
+}
+
+#f {
+    color: deeppink;
+}
+
+.animal {
+    display: inline-block;
+}
+
+table, th, td {
+    border: 1px solid black;
+    border-collapse: collapse;
+}
+
+th, td {
+    min-width: 50px;
+    text-align: center;
+}
