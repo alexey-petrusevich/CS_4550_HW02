@@ -1,0 +1,18 @@
+table {
+    border: 5px solid black;
+}
+td, th {
+    align-content: center;
+}
+
+button {
+    min-width: 50px;
+    min-height: 50px;
+}
+#result {
+    text-align: right;
+    min-width: 150px;
+    min-height: 50px;
+    border: 2px solid black;
+    font-size: 36px;
+}
