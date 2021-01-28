@@ -1,11 +1,10 @@
 (function () {
   "use strict"
 
-  // result textfield displayed by the calculator
-  let resultTF = document.getElementById("result");
   // states of the calculator
   const states = {FIRST_OPERAND: 1, OPERATOR: 2, SECOND_OPERAND: 3};
   const operators = {ADD: 1, SUBTRACT: 2, MULTIPLY: 3, DIVIDE: 4};
+  // const firstSecondOperator = {firstOperand : 0, secondOperand: 0, operator : operators.ADD};
   let currentState = states.FIRST_OPERAND;
   let firstOperand = 0, secondOperand = 0, operator;
 
@@ -15,23 +14,74 @@
 
   // event handler for numeric button clicks
   function numberButtonClicked(number) {
-    if (isFieldOverflown()) {
-      return;
-    }
     if (currentState == states.OPERATOR) {
-      firstOperand = Number(resultTF.innerText);
-      resultTF.innerText = number;
+      document.getElementById("result").innerText = number;
       currentState = states.SECOND_OPERAND;
-    } else if (resultTF.innerText == "0") {
-      resultTF.innerText = number;
+    } else if (document.getElementById("result").innerText.length > 9) {
+      return;
+    } else if (document.getElementById("result").innerText == "0") {
+      document.getElementById("result").innerText = number;
     } else {
-      resultTF.innerText += number;
+      document.getElementById("result").innerText += number;
+    }
+  }
+
+  function calculate() {
+    switch (operator) {
+      case operators.ADD:
+        return firstOperand + secondOperand;
+        break;
+      case operators.SUBTRACT:
+        return firstOperand - secondOperand;
+        break;
+      case operators.MULTIPLY:
+        return firstOperand * secondOperand;
+        break;
+      case operators.DIVIDE:
+        return firstOperand / secondOperand;
+        break;
+    }
+  }
+
+  // normalizes the value to the length of 10 characters
+  function normalize(value) {
+    let renderedValue = value.toString();
+    if (renderedValue.length > 10) {
+      // normalize
+      if (value >= 10000000000) {
+        // exponentiate
+        return value.toExponential(3);
+      } else {
+        // truncate
+        return renderedValue.substr(0, 10);
+      }
+
+    } else {
+      return renderedValue;
+    }
+    if (value < 10000000000) {
+      if (renderedValue.toString() > 10) {
+        return renderedValue.substr(0, 11);
+      } else {
+        return value.toExponential(6).toString();
+      }
+    } else {
+      return renderedValue;
     }
   }
 
   // event listener for operation buttons
   // TODO: complete
   function operationButtonClicked(operationType) {
+    if (currentState == states.FIRST_OPERAND) {
+      firstOperand = Number(document.getElementById("result").innerText);
+    } else if (currentState == states.SECOND_OPERAND) {
+      secondOperand = Number(document.getElementById("result").innerText);
+      let calculatedResult = calculate();
+      document.getElementById("result").innerText = normalize(calculatedResult);
+      firstOperand = calculatedResult;
+    }
+
     currentState = states.OPERATOR;
     switch (operationType) {
       case "plus-equal":
@@ -49,8 +99,6 @@
       default:
         throw "Unknown operation type";
     }
-    let value = Number(document.getElementById(buttonId));
-    resultTF.innerHTML += value;
   }
 
   // event listener for other button clicks
@@ -60,11 +108,11 @@
         currentState = states.FIRST_OPERAND;
         firstOperand = 0;
         secondOperand = 0;
-        resultTF.innerText = "0";
+        document.getElementById("result").innerText = "0";
         break;
       case "decimal":
-        if (!resultTF.innerText.includes(".")) {
-          resultTF.innerText += ".";
+        if (!document.getElementById("result").innerText.includes(".")) {
+          document.getElementById("result").innerText += ".";
         }
         break;
     }
@@ -100,18 +148,6 @@
           () => otherButtonClicked(elementId),
           false);
     })
-  }
-
-  // OTHER FUNCTIONS
-  /**
-   * Checks if the length of the field is greater than 10 symbols
-   * and returns TRUE if it is and FALSE otherwise
-   *
-   * @return TRUE if the length of the field is greater than 10 characters
-   * and FALSE otherwise
-   */
-  function isFieldOverflown() {
-    return resultTF.innerText.length > 10;
   }
 
   // Delay the setup code until page is fully loaded.
