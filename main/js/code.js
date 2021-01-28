@@ -2,53 +2,69 @@
   "use strict"
 
   // result textfield displayed by the calculator
-  let result = document.getElementById("result")
-  let temp = 0; // to hold value typed in
+  let resultTF = document.getElementById("result");
+  // states of the calculator
+  const states = {FIRST_OPERAND: 1, OPERATOR: 2, SECOND_OPERAND: 3};
+  const operators = {ADD: 1, SUBTRACT: 2, MULTIPLY: 3, DIVIDE: 4};
+  let currentState = states.FIRST_OPERAND;
+  let firstOperand = 0, secondOperand = 0, operator;
 
   //--------------------------------------------
   // EVENT HANDLERS
   //--------------------------------------------
 
   // event handler for numeric button clicks
-  function number_button_clicked(number) {
-    if (result.innerText == "0") {
-      result.innerText = number;
+  function numberButtonClicked(number) {
+    if (isFieldOverflown()) {
+      return;
+    }
+    if (currentState == states.OPERATOR) {
+      firstOperand = Number(resultTF.innerText);
+      resultTF.innerText = number;
+      currentState = states.SECOND_OPERAND;
+    } else if (resultTF.innerText == "0") {
+      resultTF.innerText = number;
     } else {
-      result.innerText += number;
+      resultTF.innerText += number;
     }
   }
 
   // event listener for operation buttons
   // TODO: complete
-  function operation_button_clicked(operationType) {
+  function operationButtonClicked(operationType) {
+    currentState = states.OPERATOR;
     switch (operationType) {
       case "plus-equal":
-        result += temp;
+        operator = operators.ADD;
         break;
       case "subtract":
+        operator = operators.SUBTRACT;
         break;
       case "multiply":
+        operator = operators.MULTIPLY;
         break;
       case "divide":
+        operator = operators.DIVIDE;
         break;
       default:
         throw "Unknown operation type";
     }
     let value = Number(document.getElementById(buttonId));
-    result.innerHTML += value;
+    resultTF.innerHTML += value;
   }
 
   // event listener for other button clicks
-  function other_button_clicked(buttonId) {
-
+  function otherButtonClicked(buttonId) {
     switch (buttonId) {
       case "clear":
-        result.innerText = "0";
-        temp = 0;
+        currentState = states.FIRST_OPERAND;
+        firstOperand = 0;
+        secondOperand = 0;
+        resultTF.innerText = "0";
         break;
       case "decimal":
-        if (!result.innerText.includes(".")) {
-          result.innerText += ".";
+        if (!resultTF.innerText.includes(".")) {
+          resultTF.innerText += ".";
         }
         break;
     }
@@ -57,7 +73,7 @@
   //--------------------------------------------
 
   // setup event listeners for each button
-  function setup_buttons() {
+  function setupButtons() {
     const operations = ["plus-equal", "subtract", "multiply", "divide"];
     const other = ["clear", "decimal"];
 
@@ -65,7 +81,7 @@
     for (let buttonId = 0; buttonId < 10; buttonId++) {
       let btn = document.getElementById(buttonId);
       btn.addEventListener('click',
-          () => number_button_clicked(buttonId),
+          () => numberButtonClicked(buttonId),
           false);
     }
 
@@ -73,7 +89,7 @@
     operations.forEach(operation => {
       let btn = document.getElementById(operation);
       btn.addEventListener('click',
-          () => operation_button_clicked(operation),
+          () => operationButtonClicked(operation),
           false);
     });
 
@@ -81,14 +97,26 @@
     other.forEach(elementId => {
       let btn = document.getElementById(elementId);
       btn.addEventListener("click",
-          () => other_button_clicked(elementId),
+          () => otherButtonClicked(elementId),
           false);
     })
   }
 
+  // OTHER FUNCTIONS
+  /**
+   * Checks if the length of the field is greater than 10 symbols
+   * and returns TRUE if it is and FALSE otherwise
+   *
+   * @return TRUE if the length of the field is greater than 10 characters
+   * and FALSE otherwise
+   */
+  function isFieldOverflown() {
+    return resultTF.innerText.length > 10;
+  }
+
   // Delay the setup code until page is fully loaded.
   window.addEventListener('load',
-      setup_buttons,
+      setupButtons,
       false);
 
 })();
