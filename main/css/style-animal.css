@@ -27,3 +27,6 @@ th, td {
     min-width: 50px;
     text-align: center;
 }
+div {
+    font-weight: bold;
+}
