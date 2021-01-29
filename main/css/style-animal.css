@@ -28,5 +28,5 @@ th, td {
     text-align: center;
 }
 div {
-    font-weight: bold;
+    font: bold italic 48px "Times New Roman";
 }
