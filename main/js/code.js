@@ -9,11 +9,11 @@
     currentState: 1
   };
 
-  //--------------------------------------------
-  // EVENT HANDLERS
-  //--------------------------------------------
-
-  // event handler for numeric button clicks
+  /**
+   * Event handler function for handling numerical button clicks.
+   *
+   * @param buttonId the id of the button
+   */
   function numberButtonClicked(buttonId) {
     if (calculator.currentState == 2) {
       document.getElementById("result").innerText = buttonId;
@@ -27,7 +27,11 @@
     }
   }
 
-  // event listener for operation buttons
+  /**
+   * Event handler function for handling operation button clicks (+, -, *, /).
+   *
+   * @param operationType type of operation being performed
+   */
   function operationButtonClicked(operationType) {
     if (calculator.currentState == 1) {
       calculator.firstOperand = Number(
@@ -71,7 +75,11 @@
     calculator.operator = operationType;
   }
 
-  // event listener for other button clicks
+  /**
+   * Event handler function for other button clicks ("clear" and ".").
+   *
+   * @param buttonId id of the button clicked
+   */
   function otherButtonClicked(buttonId) {
     switch (buttonId) {
       case "clear":
@@ -88,9 +96,9 @@
     }
   }
 
-  //--------------------------------------------
-
-  // setup event listeners for each button
+  /**
+   * Sets up event listeners for each button in the calculator.
+   */
   function setupButtons() {
     const operations = ["plus-equal", "subtract", "multiply", "divide"];
     const other = ["clear", "decimal"];
