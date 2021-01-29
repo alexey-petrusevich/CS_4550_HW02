@@ -29,6 +29,11 @@
 
   /**
    * Event handler function for handling operation button clicks (+, -, *, /).
+   * Note about calculator:
+   * - Operators do not have precedence, and are being procecced as
+   * they are entered;
+   * - Operators other than "+" ("+/=") calculate the result in the same way
+   * as Calculator in Windows 10;
    *
    * @param operationType type of operation being performed
    */
@@ -128,6 +133,7 @@
     })
   }
 
+  // Taken from Nat Tuck lecture notes, Lecture 3
   // Delay the setup code until page is fully loaded.
   window.addEventListener('load',
       setupButtons,
