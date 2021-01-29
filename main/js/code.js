@@ -1,113 +1,83 @@
 (function () {
   "use strict"
 
-  // states of the calculator
-  const states = {FIRST_OPERAND: 1, OPERATOR: 2, SECOND_OPERAND: 3};
-  const operators = {ADD: 1, SUBTRACT: 2, MULTIPLY: 3, DIVIDE: 4};
-  // const firstSecondOperator = {firstOperand : 0, secondOperand: 0, operator : operators.ADD};
-  let currentState = states.FIRST_OPERAND;
-  let firstOperand = 0, secondOperand = 0, operator;
+  // state of the calculator
+  let calculator = {
+    firstOperand: 0,
+    secondOperand: 0,
+    operator: "plus-equal",
+    currentState: 1
+  };
 
   //--------------------------------------------
   // EVENT HANDLERS
   //--------------------------------------------
 
   // event handler for numeric button clicks
-  function numberButtonClicked(number) {
-    if (currentState == states.OPERATOR) {
-      document.getElementById("result").innerText = number;
-      currentState = states.SECOND_OPERAND;
+  function numberButtonClicked(buttonId) {
+    if (calculator.currentState == 2) {
+      document.getElementById("result").innerText = buttonId;
+      calculator.currentState = 3;
     } else if (document.getElementById("result").innerText.length > 9) {
       return;
     } else if (document.getElementById("result").innerText == "0") {
-      document.getElementById("result").innerText = number;
+      document.getElementById("result").innerText = buttonId;
     } else {
-      document.getElementById("result").innerText += number;
-    }
-  }
-
-  function calculate() {
-    switch (operator) {
-      case operators.ADD:
-        return firstOperand + secondOperand;
-        break;
-      case operators.SUBTRACT:
-        return firstOperand - secondOperand;
-        break;
-      case operators.MULTIPLY:
-        return firstOperand * secondOperand;
-        break;
-      case operators.DIVIDE:
-        return firstOperand / secondOperand;
-        break;
-    }
-  }
-
-  // normalizes the value to the length of 10 characters
-  function normalize(value) {
-    let renderedValue = value.toString();
-    if (renderedValue.length > 10) {
-      // normalize
-      if (value >= 10000000000) {
-        // exponentiate
-        return value.toExponential(3);
-      } else {
-        // truncate
-        return renderedValue.substr(0, 10);
-      }
-
-    } else {
-      return renderedValue;
-    }
-    if (value < 10000000000) {
-      if (renderedValue.toString() > 10) {
-        return renderedValue.substr(0, 11);
-      } else {
-        return value.toExponential(6).toString();
-      }
-    } else {
-      return renderedValue;
+      document.getElementById("result").innerText += buttonId;
     }
   }
 
   // event listener for operation buttons
-  // TODO: complete
   function operationButtonClicked(operationType) {
-    if (currentState == states.FIRST_OPERAND) {
-      firstOperand = Number(document.getElementById("result").innerText);
-    } else if (currentState == states.SECOND_OPERAND) {
-      secondOperand = Number(document.getElementById("result").innerText);
-      let calculatedResult = calculate();
-      document.getElementById("result").innerText = normalize(calculatedResult);
-      firstOperand = calculatedResult;
-    }
+    if (calculator.currentState == 1) {
+      calculator.firstOperand = Number(
+          document.getElementById("result").innerText);
+    } else if (calculator.currentState == 3) {
+      calculator.secondOperand = Number(
+          document.getElementById("result").innerText);
 
-    currentState = states.OPERATOR;
-    switch (operationType) {
-      case "plus-equal":
-        operator = operators.ADD;
-        break;
-      case "subtract":
-        operator = operators.SUBTRACT;
-        break;
-      case "multiply":
-        operator = operators.MULTIPLY;
-        break;
-      case "divide":
-        operator = operators.DIVIDE;
-        break;
-      default:
-        throw "Unknown operation type";
+      let calculatedResult = function () {
+        switch (calculator.operator) {
+          case "plus-equal":
+            return calculator.firstOperand + calculator.secondOperand;
+          case "subtract":
+            return calculator.firstOperand - calculator.secondOperand;
+          case "multiply":
+            return calculator.firstOperand * calculator.secondOperand;
+          case "divide":
+            return calculator.firstOperand / calculator.secondOperand;
+        }
+      }();
+
+      document.getElementById(
+          "result").innerText = function (value) {
+        let renderedValue = value.toString();
+        if (renderedValue.length > 10) {
+          if (value >= 10000000000) {
+            // exponentiate
+            return value.toExponential(3);
+          } else {
+            // truncate
+            return renderedValue.substr(0, 10);
+          }
+        } else {
+          return renderedValue;
+        }
+      }(calculatedResult);
+
+      calculator.firstOperand = calculatedResult;
     }
+    calculator.currentState = 2;
+    calculator.operator = operationType;
   }
 
   // event listener for other button clicks
   function otherButtonClicked(buttonId) {
     switch (buttonId) {
       case "clear":
-        currentState = states.FIRST_OPERAND;
-        firstOperand = 0;
-        secondOperand = 0;
+        calculator.currentState = 1;
+        calculator.firstOperand = 0;
+        calculator.secondOperand = 0;
         document.getElementById("result").innerText = "0";
         break;
       case "decimal":
